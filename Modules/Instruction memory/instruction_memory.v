@@ -14,4 +14,29 @@ module instruction_memory(
     from that address onto the read data output, RD.
 
  */   
+
+ /*Chat GPT
+ module DataMemory (
+  input wire [31:0] address,
+  input wire [31:0] writeData,
+  input wire writeEnable,
+  output wire [31:0] readData
+);
+
+  reg [31:0] memory [0:1023]; // Assuming 1K words of data memory
+
+  // Read operation
+  assign readData = memory[address];
+
+  // Write operation
+  always @(posedge clk) begin
+    if (writeEnable) begin
+      memory[address] <= writeData;
+    end
+  end
+
+endmodule
+
+ */
+
 endmodule

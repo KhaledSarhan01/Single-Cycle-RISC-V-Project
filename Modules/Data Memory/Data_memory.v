@@ -1,9 +1,3 @@
-module Data_memory(
-    input clk,
-    input [31:0] A,
-    input [31:0] WD,
-    output [31:0] RD
-);
 //module behaviour
 /*
 Book Description:
@@ -12,5 +6,23 @@ Book Description:
     edge of the clock. If its write enable is 0, then it reads from address A
     onto the read data bus, RD.
 */
-    
+
+module Data_memory(
+    input clk,
+    input [31:0] A,
+    input [31:0] WD,
+    input WE,		//WE: Write Enable
+    output reg [31:0] RD
+);
+
+
+reg [31:0] memory [0:31];
+
+always @(posedge clk) begin 
+	if(WE==1)
+		memory[A]<=WD;
+	else
+		RD<=memory[A];
+end
+
 endmodule
