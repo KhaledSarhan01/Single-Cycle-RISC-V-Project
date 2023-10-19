@@ -1,10 +1,28 @@
+/*
+implemented by: Youssif Ekramy
+Date: 18/10/2023
+*/
+//module Behaviour 
+/*
+    op[2:1]=01 ,then add/sub operations
+        where , add: op[0]=0 
+                sub: op[0]=1
+     op[2:1]=10 ,then and/or operations 
+        where , or: op[0]=0
+                and: op[0]=1
+     op[2:1]=11 ,then other operations 
+        where , slt: op=110             
+*/
+
 module ALU(
+    //data path signals
     input [31:0] SrcA,
     input [31:0] SrcB,
-    input [2:0] funct3, // 3-bit ALU operation code
-    input [1:0] ALUOp,
+    output reg [31:0] ALU_result,
+
+    //control signals
     output zero,
-    output reg [31:0] ALU_result
+    input [2:0] ALU_Control
 );
 
 // Declare internal wires for ALU operations
@@ -17,20 +35,12 @@ wire [31:0] and_result;
 // ALU operation decoding logic
 always @(*)
 begin
-    case (ALUOp)
-        2'b00: ALU_result = add_result;
-        2'b01: ALU_result = sub_result;
-        2'b10:
-        begin
-            case (funct3)
-                3'b000: ALU_result = add_result;
-                3'b001: ALU_result = sub_result;
-                3'b010: ALU_result = slt_result;
-                3'b110: ALU_result = or_result;
-                3'b111: ALU_result = and_result;
-                default: ALU_result = 32'b0; // Default to zero
-            endcase
-        end
+    case (ALU_Control)
+        3'b010: ALU_result = add_result;
+        3'b011: ALU_result = sub_result;
+        3'b110: ALU_result = slt_result;
+        3'b100: ALU_result = or_result;
+        3'b101: ALU_result = and_result;
         default:ALU_result = 32'b0;
     endcase
 end

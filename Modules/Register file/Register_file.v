@@ -1,10 +1,11 @@
 module Register_file(
     input clk,
-    
+    //Data path signals
     input [4:0] A1, output [31:0] RD1,
     input [4:0] A2, output [31:0] RD2,
-
-    input [4:0] A3, input  [31:0] WD1,input WE,
+    input [4:0] A3, input  [31:0] WD1,
+    //Control Signal
+    input WE,
     
 );
  //Module Behaviour

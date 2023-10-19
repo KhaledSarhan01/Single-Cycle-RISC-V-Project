@@ -1,11 +1,9 @@
 module Program_Counter(
     input clk,
-    input reset,
-    input inc,
-    
-    input [31:0] PC_in,
-    input in_enable,
-    
+    //control signal
+    input [2:0] PC_Control,
+    //Data Path signal
+    input [31:0] PC_in,//it's the sign extended address to be added
     output [31:0] PC_out 
 );
 //module behaviour
@@ -16,15 +14,12 @@ book description:
 
 my design:
 "NOTE: I redesign it to include some elements outside the book idea"
-    if(reset) output address= x0100;
-    else {
-        if(in_enble) pc=pc_in;
-        else{
-            if(inc) pc_out=pc_out+4;
-            else pc_out=pc_out;
-            }
-        }
+    PC operation
+      PC_Control=00 , reset           : PC_next =0x 0000_1000
+      PC_Control=10 , inc by 4        : PC_next =PC_current +4
+      PC_Control=11 , Goto PC_Target  : PC_next =PC_current +Sign_extended_out 
 */
+
 /*Chat GPT:
 module ProgramCounter (
   input wire clk,          // Clock signal
