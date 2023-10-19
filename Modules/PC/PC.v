@@ -1,5 +1,8 @@
 //module behaviour
 /*
+created by : Khaled Sarhan 
+date:19/10/2023
+
 book description:
     The program counter (PC) points to the current instruction. Its 
     input, PCNext, indicates the address of the next instruction.
