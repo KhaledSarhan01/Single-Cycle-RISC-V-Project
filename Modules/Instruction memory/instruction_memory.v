@@ -1,7 +1,7 @@
 module instruction_memory(
     input clk,
     input  [31:0] PC_out_address,
-    output [31:0] instruction,
+    output [31:0] instruction
 );
  //module behaviour 
  /*

@@ -18,7 +18,7 @@ module sign_extender(
     input [1:0] ImmSrc,
     //data path signal
     input  [31:0] data_in,
-    output [31:0] data_out
+    output reg [31:0] data_out
 );
 
 // Module behavior

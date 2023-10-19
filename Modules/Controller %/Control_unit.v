@@ -47,7 +47,8 @@ Instructions impelemented:
 
 */
 module Control_unit(
-   
+    //reset the processor
+    input rst,
     //instruction
     input [6:0] op_code,//inst[6:0]
     input [1:0] funct3, //inst[14:12]
@@ -75,95 +76,99 @@ module Control_unit(
     output reg Result_Src
 
 );
+
     reg Branch;
     reg ALU_op;
 
  always @(*) begin
-    //main Decoder 
-        case (op_code)
+    if(rst) reset=1'b1;
+    else begin
+        //main Decoder 
+            case (op_code)
 
-            7'b0000011://lw instruction
-                begin
-                    Reg_write <=1'b1  ;
-                    ImmSrc    <=2'b00 ;
-                    ALU_Src   <=1'b1  ;
-                    Mem_wirte <=1'b0  ;
-                    Result_Src<=1'b0  ;
-                    Branch    <=1'b0  ;
-                    ALU_op    <=2'b00 ;
-                end
+                7'b0000011://lw instruction
+                    begin
+                        Reg_write <=1'b1  ;
+                        ImmSrc    <=2'b00 ;
+                        ALU_Src   <=1'b1  ;
+                        Mem_wirte <=1'b0  ;
+                        Result_Src<=1'b0  ;
+                        Branch    <=1'b0  ;
+                        ALU_op    <=2'b00 ;
+                    end
 
-            7'b0100011://sw instruction
-                begin
-                    Reg_write <=1'b0  ;
-                    ImmSrc    <=2'b01 ;
-                    ALU_Src   <=1'b1  ;
-                    Mem_wirte <=1'b1  ;
-                    Result_Src<=1'b0  ;//don't care
-                    Branch    <=1'b0  ;
-                    ALU_op    <=2'b00 ;
-                end
+                7'b0100011://sw instruction
+                    begin
+                        Reg_write <=1'b0  ;
+                        ImmSrc    <=2'b01 ;
+                        ALU_Src   <=1'b1  ;
+                        Mem_wirte <=1'b1  ;
+                        Result_Src<=1'b0  ;//don't care
+                        Branch    <=1'b0  ;
+                        ALU_op    <=2'b00 ;
+                    end
 
-            7'b0110011://R-Type instruction
-                begin
-                    Reg_write <=1'b1  ;
-                    ImmSrc    <=2'b00 ;//don't care
-                    ALU_Src   <=1'b0  ;
-                    Mem_wirte <=1'b0  ;
-                    Result_Src<=1'b0  ;
-                    Branch    <=1'b0  ;
-                    ALU_op    <=2'b10 ;
-                end
+                7'b0110011://R-Type instruction
+                    begin
+                        Reg_write <=1'b1  ;
+                        ImmSrc    <=2'b00 ;//don't care
+                        ALU_Src   <=1'b0  ;
+                        Mem_wirte <=1'b0  ;
+                        Result_Src<=1'b0  ;
+                        Branch    <=1'b0  ;
+                        ALU_op    <=2'b10 ;
+                    end
 
-            7'b1100011://beq instruction
-                begin
-                    Reg_write <=1'b0  ;
-                    ImmSrc    <=2'b10 ;
-                    ALU_Src   <=1'b0  ;
-                    Mem_wirte <=1'b0  ;
-                    Result_Src<=1'b0  ;//don't care
-                    Branch    <=1'b1  ;
-                    ALU_op    <=2'b01 ;
-                end 
+                7'b1100011://beq instruction
+                    begin
+                        Reg_write <=1'b0  ;
+                        ImmSrc    <=2'b10 ;
+                        ALU_Src   <=1'b0  ;
+                        Mem_wirte <=1'b0  ;
+                        Result_Src<=1'b0  ;//don't care
+                        Branch    <=1'b1  ;
+                        ALU_op    <=2'b01 ;
+                    end 
 
-            7'b0010011://I-type ALU instruction
-                begin
-                    Reg_write <=1'b1  ;
-                    ImmSrc    <=2'b00 ;
-                    ALU_Src   <=1'b1  ;
-                    Mem_wirte <=1'b0  ;
-                    Result_Src<=1'b0  ;
-                    Branch    <=1'b0  ;
-                    ALU_op    <=2'b10 ;
-                end 
+                7'b0010011://I-type ALU instruction
+                    begin
+                        Reg_write <=1'b1  ;
+                        ImmSrc    <=2'b00 ;
+                        ALU_Src   <=1'b1  ;
+                        Mem_wirte <=1'b0  ;
+                        Result_Src<=1'b0  ;
+                        Branch    <=1'b0  ;
+                        ALU_op    <=2'b10 ;
+                    end 
 
-            default://not the ideal way to design the default 
-            reset = 1'b1;
+                default://not the ideal way to design the default 
+                reset = 1'b1;
 
-        endcase  
+            endcase  
 
-    //ALU Decoder
-        case (ALU_op)
-            2'b00: //lw,sw -> add
-                ALU_Control=3'b010;
-            2'b01: //beq -> sub
-                ALU_Control=3'b011;
-            2'b10://depends on the funct3
-                begin
-                    case (funct3)
-                        2'b00://dependes on{op[5],funct7}
-                            ALU_Control= /*if code==11*/( op_code[5] && funct7 )? /*add*/ 3'b010 :/*sub*/ 3'b011;
-                        2'b010://slt
-                            ALU_Control=3'b110;
-                        2'b110://or
-                            ALU_Control=3'b100;
-                        2'b111://and
-                            ALU_Control=3'b101;
-                        default: ALU_Control=3'b000;    
-                    endcase
-                end        
-            default: ALU_Control=3'b000;
-        endcase      
+        //ALU Decoder
+            case (ALU_op)
+                2'b00: //lw,sw -> add
+                    ALU_Control=3'b010;
+                2'b01: //beq -> sub
+                    ALU_Control=3'b011;
+                2'b10://depends on the funct3
+                    begin
+                        case (funct3)
+                            2'b00://dependes on{op[5],funct7}
+                                ALU_Control= /*if code==11*/( op_code[5] && funct7 )? /*add*/ 3'b010 :/*sub*/ 3'b011;
+                            2'b010://slt
+                                ALU_Control=3'b110;
+                            2'b110://or
+                                ALU_Control=3'b100;
+                            2'b111://and
+                                ALU_Control=3'b101;
+                            default: ALU_Control=3'b000;    
+                        endcase
+                    end        
+                default: ALU_Control=3'b000;
+            endcase 
+    end     
  end
 
 //for PC source control
