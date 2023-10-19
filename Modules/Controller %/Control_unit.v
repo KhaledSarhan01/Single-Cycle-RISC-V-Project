@@ -1,4 +1,8 @@
 /*
+created by : Khaled Sarhan 
+Date : 19/10/2023
+*/
+/*
   ALU operations:
     ALU_op[2:1]=01 ,then add/sub operations
         where , add: op[0]=0 
@@ -63,7 +67,7 @@ module Control_unit(
 
     //PC
     output reg reset,
-    output reg PC_Src,
+    output PC_Src,
 
     //Register file
     output reg Reg_write,//connected to WE3 

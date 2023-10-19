@@ -1,3 +1,8 @@
+/*
+created by : Khaled Sarhan 
+Date : 19/10/2023
+*/
+/*
 `include "ALU/ALU.v"
 `include "Controller/Control_unit.v"
 `include "Data Memory/Data_memory.v"
@@ -5,12 +10,27 @@
 `include "PC/PC.v"
 `include "Register file/Register_file.v"
 `include "Sign Extender/Sign_Extender.v"
+*/
 
 module RISC_V_Processor
 (
     input clk,
     input reset_input 
 );
+   //data path signals
+    wire [31:0] PC_out;
+    wire [31:0] Instruction;
+    
+    wire [31:0] Reg_out_1;
+    wire [31:0] Reg_out_2;
+    reg [31:0] Reg_In;
+
+    wire [31:0] Sign_extended;
+
+    reg [31:0] ALU_In;
+    wire [31:0] ALU_Result;
+    wire [31:0] Data_Mem_out;
+
     //control Signals
     wire reset_control,PC_Src;
     wire Reg_write;
@@ -46,21 +66,6 @@ module RISC_V_Processor
         .Result_Src(Result_Src)
         );
 
-
-    //data path signals
-    wire [31:0] PC_out;
-    wire [31:0] Instruction;
-    
-    wire [31:0] Reg_out_1;
-    wire [31:0] Reg_out_2;
-    wire [31:0] Reg_In;
-
-    wire [31:0] Sign_extended;
-
-    wire [31:0] ALU_In;
-    wire [31:0] ALU_Result;
-    wire [31:0] Data_Mem_out;
-
     //PC
         PC Program_Counter(
             .clk(clk),
@@ -85,7 +90,7 @@ module RISC_V_Processor
             .A2(Instruction[24:20]),.RD2(Reg_out_2),
             .A3(Instruction[11:7] ),.WD1(Reg_In),
             //Control Signal
-            .WE(Reg_write),
+            .WE(Reg_write)
             );
     //Sign Extender
         sign_extender Immediate_creator(
