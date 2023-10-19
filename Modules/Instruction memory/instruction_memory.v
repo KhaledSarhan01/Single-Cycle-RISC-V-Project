@@ -15,6 +15,22 @@ module instruction_memory(
 
  */   
 
+// Define the instruction memory as a memory array
+reg [31:0] mem [0:1023]; // 1024 words of 32 bits each
+ // Initialize the memory with example instructions
+    initial begin
+        // PUT YOUR INSTRUCTIONS HERE
+        mem[0] <= 32'h01234567; // Example instruction 1
+        mem[1] <= 32'h89ABCDEF; // Example instruction 2
+        
+    end
+
+    // Read operation
+    always @(posedge clk) begin
+        instruction <= mem[PC_out_address]; // Read the instruction from the specified address
+    end
+
+endmodule
  /*Chat GPT
  module DataMemory (
   input wire [31:0] address,
@@ -38,5 +54,3 @@ module instruction_memory(
 endmodule
 
  */
-
-endmodule
