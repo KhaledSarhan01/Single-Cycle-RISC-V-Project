@@ -13,13 +13,14 @@ module Control_unit(
     output reg [2:0] ALU_Control,
 
     //PC
-    output reg [2:0] PC_Control,
+    output reg reset,
+    output reg PC_Src,
 
     //Register file
     output reg WE3,
 
     //sign extender
-    output reg ImmSrc,
+    output reg [1:0] ImmSrc,
 
     //Different MUX in the processor
     output reg ALU_Src,
@@ -38,10 +39,11 @@ module Control_unit(
         where , slt: op=110             
 
     PC operation:
-        PC_Control=00 , reset           : PC_next =0x 0000_1000
-        PC_Control=10 , inc by 4        : PC_next =PC_current +4
-        PC_Control=11 , Goto PC_Target  : PC_next =PC_current +Sign_extended_out 
-    
+      if(reset) then PC_next =0x 0000_1000
+        else
+            PC_Src=0 , inc by 4        : PC_next =PC_current +4
+            PC_Src=1 , Goto PC_Target  : PC_next =PC_current +Sign_extended_out  
+            
     Data memory operation:
         if(WE) then Mem[A]=WD;
         else  WR=Mem[A];
@@ -51,9 +53,10 @@ module Control_unit(
         else no action on Mem[A3]
 
     sign extender operation:
-        if(ImmSrc) then extend {Instr[31:25],Instr11:7} (for sw)
-        else extend inst[31:20] (for lw)
-
+        Case(ImmSrc)
+            00:out={{20{inst[31]}},inst[31:20]}
+            01:out={{20{inst[31]}},inst[31:25],inst[11:7]}
+            10:out={{20{inst[31]}},inst[7],inst[31:25],inst[11:8],1'b0}
     Different MUXs:
         case(ALU_src)
             0: SrcB = Register_file_Data2; 

@@ -1,11 +1,3 @@
-module Program_Counter(
-    input clk,
-    //control signal
-    input [2:0] PC_Control,
-    //Data Path signal
-    input [31:0] PC_in,//it's the sign extended address to be added
-    output [31:0] PC_out 
-);
 //module behaviour
 /*
 book description:
@@ -15,35 +7,35 @@ book description:
 my design:
 "NOTE: I redesign it to include some elements outside the book idea"
     PC operation
-      PC_Control=00 , reset           : PC_next =0x 0000_1000
-      PC_Control=10 , inc by 4        : PC_next =PC_current +4
-      PC_Control=11 , Goto PC_Target  : PC_next =PC_current +Sign_extended_out 
+      if(reset) then PC_next =0x 0000_1000
+      else
+      PC_Control=0 , inc by 4        : PC_next =PC_current +4
+      PC_Control=1 , Goto PC_Target  : PC_next =PC_current +Sign_extended_out 
 */
 
-/*Chat GPT:
-module ProgramCounter (
-  input wire clk,          // Clock signal
-  input wire rst,          // Reset signal
-  input wire inc,          // Increment signal
-  input wire [31:0] extAddress,  // External address input
-  output wire [31:0] pc    // Program counter output
+module Program_Counter(
+    input clk,
+    //control signal
+    input reset,
+    input PC_Src,
+    //Data Path signal
+    input [31:0] PC_in,//it's the sign extended address to be added
+    output [31:0] PC_out 
 );
 
-  reg [31:0] counter;       // Program counter register
+ reg [31:0] PC_reg;       // Program counter register
 
-  always @(posedge clk or posedge rst) begin
-    if (rst) begin
-      counter <= 32'h00000000;  // Reset the counter to 0
-    end else if (inc) begin
-      counter <= counter + 1;  // Increment the counter by 1
-    end else begin
-      counter <= extAddress;   // Set the counter to the external address
-    end
-  end
+always @(posedge clk or posedge reset) begin
+  if(reset) 
+    PC_reg <= 32'h0000_1000;
+  else begin
+    if(PC_Src) 
+      PC_reg <= PC_reg +PC_in; 
+    else 
+      PC_reg <= PC_reg + 4;
+    end 
+end
 
-  assign pc = counter;  // Output the program counter value
+assign PC_out = PC_reg;
 
-endmodule
-
-*/
 endmodule
