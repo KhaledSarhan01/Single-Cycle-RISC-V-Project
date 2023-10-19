@@ -10,7 +10,7 @@ book design:
 Case(ImmSrc)
             00:out={{20{inst[31]}},inst[31:20]}
             01:out={{20{inst[31]}},inst[31:25],inst[11:7]}
-            10:out={{20{inst[31]}},inst[7],inst[31:25],inst[11:8],1'b0}
+            10:out={{20{inst[31]}},inst[7],inst[31:25],inst[11:8],1'b0}        
 */  
 
 module sign_extender(
@@ -26,9 +26,18 @@ module sign_extender(
         case (ImmSrc)
             2'b00:data_out = {{20{data_in[31]}}, data_in[31:20]};
             2'b01:data_out = {{20{data_in[31]}}, data_in[31:25],data_in[11:7]};
-            2'b10:data_out = {{20{data_in[31]}}, data_in[7] ,data_in[31:20],data_in[11:8],1'b0};
+            2'b10:data_out = {{20{data_in[31]}}, data_in[7] ,data_in[31:25],data_in[11:8],1'b0};
             2'b11:data_out = {{12{data_in[31]}}, data_in[19:12] ,data_in[20],data_in[30:21],1'b0};
             default: data_out= 32'b0;
         endcase 
     end  
 endmodule
+/*
+Example: 
+    data_in=1010_0101_0011_0110_1100_1010_0101_0010
+    case(ImmSrc)
+        00: data_out=1111_1111_1111_1111_1111_1010_0101_0011
+        01: data_out=1111_1111_1111_1111_1111_1010_0101_0100
+        10: data_out=1111_1111_1111_1111_1111_0101_0010_0100
+        11: data_out=1111_1111_1111_0110_1100_1010_0101_0010
+*/

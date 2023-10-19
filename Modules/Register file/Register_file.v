@@ -1,14 +1,8 @@
-module Register_file(
-    input clk,
-    //Data path signals
-    input [4:0] A1, output [31:0] RD1,
-    input [4:0] A2, output [31:0] RD2,
-    input [4:0] A3, input  [31:0] WD1,
-    //Control Signal
-    input WE,
-    
-);
- //Module Behaviour
+/*
+created by: Youssif Ekramy
+date: 19/10/2023
+*/
+//Module Behaviour
  /*
  Book Design: "and I will follow"
     The 32-element × 32-bit register file holds registers x0–x31. Recall 
@@ -22,33 +16,42 @@ module Register_file(
     write enable (WE3) is asserted, then the register file writes the data 
     (WD3) into the specified register (A3) on the rising edge of the clock.
  */   
- 
- /* Chat GPT
- module RegisterFile (
-  input wire [4:0] readReg1,  // Read register 1
-  input wire [4:0] readReg2,  // Read register 2
-  input wire [4:0] writeReg,  // Write register
-  input wire writeEnable,    // Write enable signal
-  input wire [31:0] writeData, // Data to be written
-  output wire [31:0] readData1, // Data from read register 1
-  output wire [31:0] readData2  // Data from read register 2
+
+
+module Register_file(
+    input clk,input RegWrite,
+    
+    input [4:0] A1, output [31:0] RD1,
+    input [4:0] A2, output [31:0] RD2,
+
+    input [4:0] A3, input  [31:0] WD1,
+    
 );
 
-  reg [31:0] registers [0:31]; // 32 registers, each 32 bits
+/*Create 32 register, each one is 32-bit wide*/
+    reg [31:0]RegFile[0:31];
 
-  // Read operations
-  assign readData1 = registers[readReg1];
-  assign readData2 = registers[readReg2];
+    /*Counter used in for loop to reset all registers to zero*/
+    integer i;
 
-  // Write operation
-  always @(posedge clk) begin
-    if (writeEnable) begin
-      registers[writeReg] <= writeData;
+    /*Reset all registers to zero*/
+	initial
+	begin
+	for(i=0;i<32;i=i+1)
+		RegFile[i]=0;	
+	end 	
+
+    /*Read asynchronously and write synchronously*/
+    always @(posedge clk or A1 or A2) begin
+
+        /*Only write when RegWrite is high; it's controlled by the control unit*/
+        if(RegWrite)
+        RegFile[A3]<=WD3;
+	
+    /*Read data at addresses A1 and A2 to RD1 and RD2 ports respectively*/
+	RD1<=RegFile[A1];
+    RD2<=RegFile[A2];
     end
-  end
 
-endmodule
-
- */
 
 endmodule
