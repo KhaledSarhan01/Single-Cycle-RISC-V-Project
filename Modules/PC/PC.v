@@ -23,22 +23,24 @@ module Program_Counter(
     input PC_Src,
     //Data Path signal
     input [31:0] PC_in,//it's the sign extended address to be added
-    output [31:0] PC_out 
+    output [31:0] PC_out,
+    output [31:0] PC_plus_4
 );
 
- reg [31:0] PC_reg;       // Program counter register
-
+  reg [31:0] PC_reg;       // Program counter register
+ 
 always @(posedge clk or posedge reset) begin
   if(reset) 
-    PC_reg <= 32'h0000_1000;
+    PC_reg <= 32'h0;
   else begin
     if(PC_Src) 
       PC_reg <= PC_reg +PC_in; 
     else 
-      PC_reg <= PC_reg + 4;
+      PC_reg <= PC_plus_4;
     end 
 end
 
-assign PC_out = PC_reg;
+assign PC_plus_4    = PC_reg + 4;
+assign PC_out       = PC_reg;
 
 endmodule

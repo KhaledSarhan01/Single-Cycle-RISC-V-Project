@@ -15,8 +15,16 @@ Date : 19/10/2023
 module RISC_V_Processor
 (
     input clk,
-    input reset_input 
-);
+    input reset_input,
+    output reg [31:0] WriteData, 
+    output reg [31:0] DataAdr, 
+    output reg MemWrite );
+
+    //outputs for test
+    assign MemWrite = Mem_wirte;
+    assign DataAdr =ALU_Result;
+    assign WriteData = Reg_out_2;
+
    //data path signals
     wire [31:0] PC_out;
     wire [31:0] Instruction;
@@ -30,6 +38,7 @@ module RISC_V_Processor
     reg [31:0] ALU_In;
     wire [31:0] ALU_Result;
     wire [31:0] Data_Mem_out;
+    wire [31:0] PC_plus_4;
 
     //control Signals
     wire reset_control,PC_Src;
@@ -39,7 +48,7 @@ module RISC_V_Processor
     wire zero;
     wire [2:0] ALU_Control;
     wire Mem_wirte;
-    wire Result_Src;
+    wire [1:0]Result_Src;
 
     //control Unit
     Control_unit controller(
@@ -73,7 +82,8 @@ module RISC_V_Processor
             .reset(reset_control),.PC_Src(PC_Src),
             //data path signals
             .PC_in(Sign_extended),
-            .PC_out(PC_out) 
+            .PC_out(PC_out),
+            .PC_plus_4(PC_plus_4) 
             );
     //instruction memory
         instruction_memory Instr_Mem (
@@ -133,8 +143,9 @@ module RISC_V_Processor
          always @(*) 
         begin
             case (Result_Src)
-            1'b0: Reg_In = ALU_Result;
-            1'b1: Reg_In = Data_Mem_out;  
+            2'b00: Reg_In = ALU_Result;
+            2'b01: Reg_In = Data_Mem_out;
+            2'b10: Reg_In = PC_plus_4;  
             default: Reg_In = 32'b0;
             endcase    
         end    

@@ -77,12 +77,13 @@ module Control_unit(
 
     //Different MUX in the processor
     output reg ALU_Src,
-    output reg Result_Src
+    output reg [1:0] Result_Src
 
 );
 
     reg Branch;
     reg ALU_op;
+    reg jump;
 
  always @(*) begin
     if(rst) reset=1'b1;
@@ -96,9 +97,10 @@ module Control_unit(
                         ImmSrc    <=2'b00 ;
                         ALU_Src   <=1'b1  ;
                         Mem_wirte <=1'b0  ;
-                        Result_Src<=1'b0  ;
+                        Result_Src<=2'b01 ;
                         Branch    <=1'b0  ;
                         ALU_op    <=2'b00 ;
+                        jump      <=1'b0  ;
                     end
 
                 7'b0100011://sw instruction
@@ -107,20 +109,22 @@ module Control_unit(
                         ImmSrc    <=2'b01 ;
                         ALU_Src   <=1'b1  ;
                         Mem_wirte <=1'b1  ;
-                        Result_Src<=1'b0  ;//don't care
+                        Result_Src<=2'bxx ;
                         Branch    <=1'b0  ;
                         ALU_op    <=2'b00 ;
+                        jump      <=1'b0  ;
                     end
 
                 7'b0110011://R-Type instruction
                     begin
                         Reg_write <=1'b1  ;
-                        ImmSrc    <=2'b00 ;//don't care
+                        ImmSrc    <=2'bxx ;
                         ALU_Src   <=1'b0  ;
                         Mem_wirte <=1'b0  ;
-                        Result_Src<=1'b0  ;
+                        Result_Src<=2'b00 ;
                         Branch    <=1'b0  ;
                         ALU_op    <=2'b10 ;
+                        jump      <=1'b0  ;
                     end
 
                 7'b1100011://beq instruction
@@ -129,9 +133,10 @@ module Control_unit(
                         ImmSrc    <=2'b10 ;
                         ALU_Src   <=1'b0  ;
                         Mem_wirte <=1'b0  ;
-                        Result_Src<=1'b0  ;//don't care
+                        Result_Src<=2'bxx ;
                         Branch    <=1'b1  ;
                         ALU_op    <=2'b01 ;
+                        jump      <=1'b0  ;
                     end 
 
                 7'b0010011://I-type ALU instruction
@@ -140,9 +145,22 @@ module Control_unit(
                         ImmSrc    <=2'b00 ;
                         ALU_Src   <=1'b1  ;
                         Mem_wirte <=1'b0  ;
-                        Result_Src<=1'b0  ;
+                        Result_Src<=2'b00 ;
                         Branch    <=1'b0  ;
                         ALU_op    <=2'b10 ;
+                        jump      <=1'b0  ;
+                    end 
+
+               7'b1101111://jal instruction
+                    begin
+                        Reg_write <=1'b1  ;
+                        ImmSrc    <=2'b11 ;
+                        ALU_Src   <=1'bx  ;
+                        Mem_wirte <=1'b0  ;
+                        Result_Src<=2'b10 ;
+                        Branch    <=1'b0  ;
+                        ALU_op    <=2'bxx ;
+                        jump      <=1'b1  ;
                     end 
 
                 default://not the ideal way to design the default 
@@ -176,6 +194,6 @@ module Control_unit(
  end
 
 //for PC source control
-assign PC_Src= Branch & zero;
+assign PC_Src= Branch & zero |jump;
 
 endmodule
