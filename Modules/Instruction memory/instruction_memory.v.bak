@@ -19,7 +19,7 @@ module instruction_memory(
     input  [31:0] PC_out_address,
     output [31:0] instruction
 );
-    reg [31:0] inst_reg;
+
     // Define the instruction memory as a memory array
     reg [31:0] mem [0:1023]; // 1024 words of 32 bits each
 
@@ -30,8 +30,7 @@ module instruction_memory(
 
     // Read operation
     always @(posedge clk) begin
-        inst_reg <= mem[PC_out_address]; // Read the instruction from the specified address
+        instruction <= mem[PC_out_address]; // Read the instruction from the specified address
     end
-    assign instruction = inst_reg;
 
 endmodule

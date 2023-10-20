@@ -55,7 +55,7 @@ module Control_unit(
     input rst,
     //instruction
     input [6:0] op_code,//inst[6:0]
-    input [2:0] funct3, //inst[14:12]
+    input [1:0] funct3, //inst[14:12]
     input funct7,       //inst[30]
    
     //Data memory 

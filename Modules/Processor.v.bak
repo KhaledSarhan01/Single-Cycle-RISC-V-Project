@@ -93,9 +93,9 @@ module RISC_V_Processor
             //Data path signals
             .A1(Instruction[19:15]),.RD1(Reg_out_1),
             .A2(Instruction[24:20]),.RD2(Reg_out_2),
-            .A3(Instruction[11:7] ),.WD3(Reg_In),
+            .A3(Instruction[11:7] ),.WD1(Reg_In),
             //Control Signal
-            .RegWrite(Reg_write)
+            .WE(Reg_write)
             );
     //Sign Extender
         sign_extender Immediate_creator(

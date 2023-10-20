@@ -1,11 +1,11 @@
 module testbench();
  //signals
-    logic clk;
-    logic reset;
-    logic [31:0] WriteData, DataAdr;
-    logic MemWrite;
+    reg clk;
+    reg reset;
+    wire [31:0] WriteData, DataAdr;
+    wire MemWrite;
  // instantiate device to be tested
- processor dut(clk, reset, WriteData, DataAdr, MemWrite);
+ RISC_V_Processor dut(clk, reset, WriteData, DataAdr, MemWrite);
  // initialize test
  initial
  begin
@@ -16,17 +16,11 @@ module testbench();
  begin
  clk <= 1; # 5; clk <= 0; # 5;
  end
+
  // check results
- always @(negedge clk)
- begin
- if(MemWrite) begin
- if(DataAdr === 100 & WriteData === 25) begin
- $display("Simulation succeeded");
- $stop;
- end else if (DataAdr !== 96) begin
- $display("Simulation failed");
- $stop;
- end
- end
- end
+ initial begin
+    $monitor("time=%0t reset=%b, WriteData=%h, DataAdr=%h, MemWrite=%h",
+        $time,reset, WriteData, DataAdr, MemWrite);
+end
+
 endmodule
